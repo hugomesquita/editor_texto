@@ -64,23 +64,20 @@ export default function Editor() {
   }, [editor]);
 
   // Salva rascunho (autosave)
-  const persist = useCallback(
-    (nextTitle, nextContent) => {
-      try {
-        localStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({
-            title: nextTitle,
-            content: nextContent,
-            savedAt: Date.now(),
-          })
-        );
-      } catch {
-        /* ignore */
-      }
-    },
-    []
-  );
+  const persist = useCallback((nextTitle, nextContent) => {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          title: nextTitle,
+          content: nextContent,
+          savedAt: Date.now(),
+        }),
+      );
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   useEffect(() => {
     if (!editor) return;
@@ -127,7 +124,7 @@ export default function Editor() {
       <div className="author">
         <span className="author-caret">›</span>
         <div className="author-meta">
-          <span className="author-name">Mariane Lima</span>
+          <span className="author-name">Hugo Mesquita</span>
           <span className="author-status">Rascunho</span>
         </div>
       </div>
