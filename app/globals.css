@@ -181,12 +181,94 @@ body {
   font-size: 28px;
   color: var(--muted);
 }
-.prose-editor img {
-  display: block;
-  margin: 8px auto;
-}
 .prose-editor ::selection {
   background: #b3d4fc;
+}
+
+/* ---------- Imagens ---------- */
+.editor-image-wrap {
+  position: relative;
+  margin: 24px 0;
+  max-width: 100%;
+}
+.editor-image-wrap .image-frame {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+  max-width: 100%;
+}
+.editor-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  display: block;
+}
+/* centralizado */
+.editor-image-wrap.align-center {
+  text-align: center;
+}
+/* largura total */
+.editor-image-wrap.align-full {
+  width: 100%;
+}
+.editor-image-wrap.align-full .image-frame,
+.editor-image-wrap.align-full .editor-image {
+  display: block;
+  width: 100%;
+}
+/* esquerda/direita: o texto contorna a imagem */
+.editor-image-wrap.align-left {
+  float: left;
+  margin: 6px 28px 12px 0;
+  max-width: 60%;
+}
+.editor-image-wrap.align-right {
+  float: right;
+  margin: 6px 0 12px 28px;
+  max-width: 60%;
+}
+/* limpa os floats no fim do conteúdo */
+.prose-editor::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.editor-image-wrap.is-selected .image-frame {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+/* alças de redimensionamento */
+.resize-handle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 7px;
+  height: 46px;
+  max-height: 60%;
+  background: var(--green);
+  border: 2px solid #fff;
+  border-radius: 6px;
+  cursor: ew-resize;
+  z-index: 5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+.resize-handle.left {
+  left: -5px;
+}
+.resize-handle.right {
+  right: -5px;
+}
+
+/* alinhamento de texto (text-align) */
+.prose-editor [style*="text-align: center"] {
+  text-align: center;
+}
+.prose-editor [style*="text-align: right"] {
+  text-align: right;
+}
+.prose-editor [style*="text-align: justify"] {
+  text-align: justify;
 }
 
 /* Placeholder (estilo Medium) */
@@ -267,6 +349,11 @@ body {
   height: 22px;
   background: rgba(255, 255, 255, 0.22);
   margin: 0 6px;
+}
+
+/* Barra flutuante da imagem */
+.image-toolbar .tb-btn.is-active {
+  color: var(--green);
 }
 
 /* Link form dentro da barra */

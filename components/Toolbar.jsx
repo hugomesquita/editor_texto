@@ -155,6 +155,50 @@ export default function Toolbar({ editor }) {
 
       <button
         type="button"
+        className={`tb-btn ${editor.isActive({ textAlign: "left" }) ? "is-active" : ""}`}
+        title="Alinhar à esquerda"
+        onClick={() => editor.chain().focus().setTextAlign("left").run()}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="M3 5h18v2H3V5zm0 4h10v2H3V9zm0 4h10v2H3v-2zm0 4h18v2H3v-2z"
+          />
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        className={`tb-btn ${editor.isActive({ textAlign: "center" }) ? "is-active" : ""}`}
+        title="Centralizar"
+        onClick={() => editor.chain().focus().setTextAlign("center").run()}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="M3 5h18v2H3V5zm4 4h10v2H7V9zm-4 4h18v2H3v-2zm4 4h10v2H7v-2z"
+          />
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        className={`tb-btn ${editor.isActive({ textAlign: "right" }) ? "is-active" : ""}`}
+        title="Alinhar à direita"
+        onClick={() => editor.chain().focus().setTextAlign("right").run()}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="M3 5h18v2H3V5zm8 4h10v2H11V9zm0 4h10v2H11v-2zM3 17h18v2H3v-2z"
+          />
+        </svg>
+      </button>
+
+      <Divider />
+
+      <button
+        type="button"
         className="tb-btn"
         title="Comentar (em breve)"
         onClick={() => editor.chain().focus().run()}

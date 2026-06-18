@@ -1,23 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FloatingMenu } from "@tiptap/react";
+import { insertImageFiles } from "@/lib/upload";
 
 export default function PlusMenu({ editor }) {
   const [open, setOpen] = useState(false);
+  const fileInputRef = useRef(null);
 
-  const insertImage = () => {
-    const url = window.prompt("URL da imagem:");
-    if (url) {
-      const safe = url.replace(/"/g, "&quot;");
-      editor
-        .chain()
-        .focus()
-        .insertContent(
-          `<p><img src="${safe}" alt="" style="max-width:100%;border-radius:4px" /></p>`
-        )
-        .run();
+  const openFilePicker = () => {
+    fileInputRef.current?.click();
+  };
+
+  const onFilesSelected = async (e) => {
+    const files = e.target.files;
+    if (files && files.length) {
+      await insertImageFiles(editor, files);
     }
+    e.target.value = ""; // permite reenviar o mesmo arquivo depois
     setOpen(false);
   };
 
@@ -45,6 +45,14 @@ export default function PlusMenu({ editor }) {
       }}
     >
       <div className={`plus-menu ${open ? "is-open" : ""}`}>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          hidden
+          onChange={onFilesSelected}
+        />
         <button
           type="button"
           className="plus-toggle"
@@ -64,7 +72,7 @@ export default function PlusMenu({ editor }) {
 
         {open && (
           <div className="plus-actions">
-            <button type="button" title="Imagem" onClick={insertImage}>
+            <button type="button" title="Enviar imagem" onClick={openFilePicker}>
               <svg width="20" height="20" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"

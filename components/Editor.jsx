@@ -6,15 +6,20 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
+import TextAlign from "@tiptap/extension-text-align";
 
 import Toolbar from "./Toolbar";
 import PlusMenu from "./PlusMenu";
+import ImageToolbar from "./ImageToolbar";
+import { CustomImage } from "./extensions/CustomImage";
+import { insertImageFiles } from "@/lib/upload";
 
 const STORAGE_KEY = "medium-editor-draft";
 
 export default function Editor() {
   const [title, setTitle] = useState("");
   const titleRef = useRef(null);
+  const editorRef = useRef(null);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -28,6 +33,13 @@ export default function Editor() {
         openOnClick: false,
         autolink: true,
         HTMLAttributes: { rel: "noopener noreferrer", target: "_blank" },
+      }),
+      CustomImage.configure({
+        inline: false,
+        allowBase64: true,
+      }),
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
       }),
       Placeholder.configure({
         placeholder: ({ node }) => {
@@ -44,8 +56,46 @@ export default function Editor() {
         class: "prose-editor",
         spellcheck: "true",
       },
+      // Upload automático ao arrastar imagens para a área de edição
+      handleDrop: (view, event, _slice, moved) => {
+        if (moved) return false; // arrasto interno de conteúdo já existente
+        const files = event.dataTransfer?.files;
+        if (
+          files &&
+          files.length &&
+          Array.from(files).some((f) => f.type.startsWith("image/"))
+        ) {
+          event.preventDefault();
+          const coords = view.posAtCoords({
+            left: event.clientX,
+            top: event.clientY,
+          });
+          const pos = coords ? coords.pos : undefined;
+          insertImageFiles(editorRef.current, files, pos);
+          return true;
+        }
+        return false;
+      },
+      // Upload automático ao colar uma imagem
+      handlePaste: (view, event) => {
+        const files = event.clipboardData?.files;
+        if (
+          files &&
+          files.length &&
+          Array.from(files).some((f) => f.type.startsWith("image/"))
+        ) {
+          event.preventDefault();
+          insertImageFiles(editorRef.current, files);
+          return true;
+        }
+        return false;
+      },
     },
   });
+
+  useEffect(() => {
+    editorRef.current = editor;
+  }, [editor]);
 
   // Carrega rascunho salvo
   useEffect(() => {
@@ -145,12 +195,26 @@ export default function Editor() {
         {editor && (
           <BubbleMenu
             editor={editor}
+            pluginKey="textToolbar"
             tippyOptions={{ duration: 120, maxWidth: "none" }}
             shouldShow={({ editor, from, to }) =>
-              from !== to && !editor.state.selection.empty
+              from !== to &&
+              !editor.state.selection.empty &&
+              !editor.isActive("image")
             }
           >
             <Toolbar editor={editor} />
+          </BubbleMenu>
+        )}
+
+        {editor && (
+          <BubbleMenu
+            editor={editor}
+            pluginKey="imageToolbar"
+            tippyOptions={{ duration: 120, maxWidth: "none" }}
+            shouldShow={({ editor }) => editor.isActive("image")}
+          >
+            <ImageToolbar editor={editor} />
           </BubbleMenu>
         )}
 
